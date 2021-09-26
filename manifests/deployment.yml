@@ -1,0 +1,42 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: workerserviceredis 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: workerserviceredis
+  template:
+    metadata:
+      labels:
+        app: workerserviceredis 
+    spec:
+      containers:
+        - name: workerserviceredis 
+          image: testes.azurecr.io/workerserviceredis
+          env:
+          - name: ConnectionStrings__RedisServer
+            valueFrom:
+              secretKeyRef:
+                name: workeracoes-secret
+                key: RedisConnection
+          - name: ApacheKafka__Topic
+            value: topic-acoes
+          - name: ApacheKafka__GroupId
+            value: workeracoes
+          - name: ApacheKafka__Broker
+            valueFrom:
+              secretKeyRef:
+                name: workeracoes-secret
+                key: KafkaBroker
+          - name: ApacheKafka__Username
+            valueFrom:
+              secretKeyRef:
+                name: workeracoes-secret
+                key: KafkaUser
+          - name: ApacheKafka__Password
+            valueFrom:
+              secretKeyRef:
+                name: workeracoes-secret
+                key: KafkaPassword
